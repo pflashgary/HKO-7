@@ -37,8 +37,8 @@ for ele in possible_hko_png_paths:
         __C.HKO_PNG_PATH = ele
         break
 if not find_hko_png_path:
-    raise RuntimeError("radarPNG is not found! You can download the radarPNG using"
-                       " `bash download_radar_png.bash`")
+    # raise RuntimeError("radarPNG is not found! You can download the radarPNG using"
+    #                    " `bash download_radar_png.bash`")
 # Search for the radarPNG_mask
 find_hko_mask_path = False
 for ele in possible_hko_mask_paths:
@@ -46,9 +46,9 @@ for ele in possible_hko_mask_paths:
         find_hko_mask_path = True
         __C.HKO_MASK_PATH = ele
         break
-if not find_hko_mask_path:
-    raise RuntimeError("radarPNG_mask is not found! You can download the radarPNG_mask using"
-                       " `bash download_radar_png.bash`")
+# if not find_hko_mask_path:
+#     raise RuntimeError("radarPNG_mask is not found! You can download the radarPNG_mask using"
+#                        " `bash download_radar_png.bash`")
 if not os.path.exists(__C.HKO_DATA_BASE_PATH):
     os.makedirs(__C.HKO_DATA_BASE_PATH)
 __C.HKO_PD_BASE_PATH = os.path.join(__C.HKO_DATA_BASE_PATH, 'pd')
