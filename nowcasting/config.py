@@ -36,7 +36,7 @@ for ele in possible_hko_png_paths:
         find_hko_png_path = True
         __C.HKO_PNG_PATH = ele
         break
-if not find_hko_png_path:
+# if not find_hko_png_path:
     # raise RuntimeError("radarPNG is not found! You can download the radarPNG using"
     #                    " `bash download_radar_png.bash`")
 # Search for the radarPNG_mask
