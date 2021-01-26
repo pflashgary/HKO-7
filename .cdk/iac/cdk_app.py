@@ -43,11 +43,9 @@ class EC2InstanceStack(core.Stack):
         subnets = vpc.private_subnets
 
         # AMI
-        # ami = ec2.MachineImage.generic_linux({
-        #             self.region: self.config["ami_name"]
-                # })
-
-        ami = ec2.MachineImage.lookup(name=self.config["ami_name"])
+        ami = ec2.MachineImage.generic_linux({
+                    self.region: self.config["ami_name"]
+                })
 
         # Create a specific SG for DT instances
         ec2_sg = ec2.SecurityGroup(
@@ -187,7 +185,7 @@ EC2InstanceStack(app,
  "ec2-instance",
  "dev",
  env=env,
- stack_name=f'ResearchDT{app.node.try_get_context("stack_ec2_suffix")}')
+ stack_name=f'ResearchDL{app.node.try_get_context("stack_ec2_suffix")}')
 
 app.synth()
 
