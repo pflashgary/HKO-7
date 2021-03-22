@@ -1,0 +1,5 @@
+mxnet
+pandas
+opencv-contrib-python
+netCDF4
+

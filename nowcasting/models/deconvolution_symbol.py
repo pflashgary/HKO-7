@@ -31,10 +31,10 @@ def encode_net_symbol(data,
         IN_LEN = cfg.MOVINGMNIST.IN_LEN
         OUT_LEN = cfg.MOVINGMNIST.OUT_LEN
         IMG_SIZE = cfg.MOVINGMNIST.IMG_SIZE
-    elif cfg.DATASET == "HKO":
-        IN_LEN = cfg.HKO.BENCHMARK.IN_LEN
-        OUT_LEN = cfg.HKO.BENCHMARK.OUT_LEN
-        IMG_SIZE = cfg.HKO.ITERATOR.WIDTH
+    elif cfg.DATASET == "SST":
+        IN_LEN = cfg.SST.BENCHMARK.IN_LEN
+        OUT_LEN = cfg.SST.BENCHMARK.OUT_LEN
+        IMG_SIZE = cfg.SST.ITERATOR.WIDTH
 
     # Input
     # (cfg.TRAIN.BATCH_SIZE, 1, IN_LEN, IMG_SIZE, IMG_SIZE)
@@ -60,24 +60,24 @@ def encode_net_symbol(data,
     # Assertions
     if cfg.DATASET == "MOVINGMNIST":
         assert (length in [1, 10, 11, 20])
-    elif cfg.DATASET == "HKO":
+    elif cfg.DATASET == "SST":
         assert (length in [1, 5, 20, 21, 25])
 
     k = [1, 1, 1]
     s = [1, 1, 1]
     p = [0, 0, 0]
 
-    if cfg.DATASET == "HKO" or (cfg.DATASET == "MOVINGMNIST" and length == 20):
+    if cfg.DATASET == "SST" or (cfg.DATASET == "MOVINGMNIST" and length == 20):
         # For MOVINGMNIST, if data_type == contextpred and OUT_LEN == 10 frames,
         # i.e. length == 20. If length == 11 we don't need this.
-        # For HKO, if length in [20, 21, 25]
+        # For SST, if length in [20, 21, 25]
         if length > 11:
             k[0] = 4
             s[0] = 2
             p[0] = 1
 
-        # For HKO, IMG_SIZE == 480, we scale it down to 96
-        if cfg.DATASET == "HKO":
+        # For SST, IMG_SIZE == 480, we scale it down to 96
+        if cfg.DATASET == "SST":
             k[1:] = [7, 7]
             s[1:] = [5, 5]
             p[1:] = [1, 1]
@@ -105,9 +105,9 @@ def encode_net_symbol(data,
         s[0] = 2
         p[0] = 1
 
-    # For HKO the HEIGHT and WIDTH is still 96,
+    # For SST the HEIGHT and WIDTH is still 96,
     # we therefore increase stride to 3
-    if cfg.DATASET == "HKO":
+    if cfg.DATASET == "SST":
         s[1:] = [3, 3]
 
     e1 = conv2d_3d_act(
@@ -129,7 +129,7 @@ def encode_net_symbol(data,
         p[0] = 1
 
     # Reset stride if previously changed
-    if cfg.DATASET == "HKO":
+    if cfg.DATASET == "SST":
         s[1:] = [2, 2]
 
     e2 = conv2d_3d_bn_act(
@@ -204,8 +204,8 @@ def video_net_symbol(encode_net,
                      eps=1e-5 + 1e-12):
     if cfg.DATASET == "MOVINGMNIST":
         OUT_LEN = cfg.MOVINGMNIST.OUT_LEN
-    elif cfg.DATASET == "HKO":
-        OUT_LEN = cfg.HKO.BENCHMARK.OUT_LEN
+    elif cfg.DATASET == "SST":
+        OUT_LEN = cfg.SST.BENCHMARK.OUT_LEN
 
     # Input
     # (batch_size, num_filter * 4, 1, 4, 4)
@@ -309,8 +309,8 @@ def video_net_symbol(encode_net,
         s[0] = 1
         p[0] = 1
 
-    # For HKO, scale up to 96 instead of 64
-    if cfg.DATASET == "HKO":
+    # For SST, scale up to 96 instead of 64
+    if cfg.DATASET == "SST":
         k[1:] = [5, 5]
         s[1:] = [3, 3]
         p[1:] = [1, 1]
@@ -337,8 +337,8 @@ def video_net_symbol(encode_net,
             num_filter=OUT_LEN * out_filter,
             no_bias=no_bias)
 
-    # For HKO we need to scale up further from 96 to 480
-    if cfg.DATASET == "HKO":
+    # For SST we need to scale up further from 96 to 480
+    if cfg.DATASET == "SST":
         k[1:] = [7, 7]
         s[1:] = [5, 5]
         p[1:] = [1, 1]
@@ -365,8 +365,8 @@ def video_net_symbol(encode_net,
                 num_filter=OUT_LEN * out_filter,
                 no_bias=no_bias)
 
-    # For HKO we add a final refinement layer
-    if cfg.DATASET == "HKO":
+    # For SST we add a final refinement layer
+    if cfg.DATASET == "SST":
         k[1:] = [3, 3]
         s[1:] = [1, 1]
         p[1:] = [1, 1]
@@ -435,9 +435,9 @@ def generator_symbol(context,
     if cfg.DATASET == "MOVINGMNIST":
         OUT_LEN = cfg.MOVINGMNIST.OUT_LEN
         IMG_SIZE = cfg.MOVINGMNIST.IMG_SIZE
-    elif cfg.DATASET == "HKO":
-        OUT_LEN = cfg.HKO.BENCHMARK.OUT_LEN
-        IMG_SIZE = cfg.HKO.ITERATOR.WIDTH
+    elif cfg.DATASET == "SST":
+        OUT_LEN = cfg.SST.BENCHMARK.OUT_LEN
+        IMG_SIZE = cfg.SST.ITERATOR.WIDTH
 
     # No operation if cfg.MODEL.DECONVBASELINE.USE_3D is True
     gen_net = mx.sym.reshape(
@@ -462,8 +462,8 @@ def discriminator_symbol(context,
     # pred: (batch_size, 1, output_length, 64, 64)
     if cfg.DATASET == "MOVINGMNIST":
         OUT_LEN = cfg.MOVINGMNIST.OUT_LEN
-    elif cfg.DATASET == "HKO":
-        OUT_LEN = cfg.HKO.BENCHMARK.OUT_LEN
+    elif cfg.DATASET == "SST":
+        OUT_LEN = cfg.SST.BENCHMARK.OUT_LEN
         mask = mx.sym.Variable('mask')
         pred = pred * mask
 

@@ -102,15 +102,13 @@ related-paper/
 *.mp4
 analyze_training_log.ipynb
 !cfg_template.yml
-!experiments/hko/*/*.yml
-!experiments/movingmnist/*/*.yml
-!experiments/movingmnist/configurations/conv2d_3d/*.yml
+!experiments/sst/*/*.yml
+!experiments/sst/*/*/*.mp4
 cse_cluster.tmpl
 dycpu.tmpl
 
-hko_data/radarPNG.tar.gz
-hko_data/radarPNG_mask.tar.gz
-hko_data/radarPNG/
-hko_data/radarPNG_mask/
-
 trained_model
+*.yml
+*.bz2*
+*.nc
+

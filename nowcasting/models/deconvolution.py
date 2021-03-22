@@ -4,7 +4,7 @@ from nowcasting.utils import load_params
 from nowcasting.ops import fc_layer, activation
 from nowcasting.my_module import MyModule
 from nowcasting.models.deconvolution_symbol import discriminator_symbol, generator_symbol
-from nowcasting.hko_factory import HKONowcastingFactory
+from nowcasting.hko_factory import SSTNowcastingFactory
 
 import os
 import sys
@@ -37,11 +37,11 @@ def construct_l2_loss(gt, pred, normalize_gt=False):
             mx.sym.mean(mx.sym.square(gt - pred)),
             grad_scale=cfg.MODEL.L2_LAMBDA,
             name="mse")
-    elif cfg.DATASET == "HKO":
-        factory = HKONowcastingFactory(
+    elif cfg.DATASET == "SST":
+        factory = SSTNowcastingFactory(
             batch_size=cfg.MODEL.TRAIN.BATCH_SIZE,
-            in_seq_len=cfg.HKO.BENCHMARK.IN_LEN,
-            out_seq_len=cfg.HKO.BENCHMARK.OUT_LEN)
+            in_seq_len=cfg.SST.BENCHMARK.IN_LEN,
+            out_seq_len=cfg.SST.BENCHMARK.OUT_LEN)
 
         return factory.loss_sym(pred=pred, target=gt)
 
@@ -78,7 +78,7 @@ def construct_modules(args):
     module_names.append("generator")
 
     loss_data_names = ['gt', 'pred']
-    if cfg.DATASET == "HKO":
+    if cfg.DATASET == "SST":
         loss_data_names.append('mask')
 
     loss_net = MyModule(
@@ -101,10 +101,10 @@ def construct_modules(args):
         IN_LEN = cfg.MOVINGMNIST.IN_LEN
         OUT_LEN = cfg.MOVINGMNIST.OUT_LEN
         IMG_SIZE = cfg.MOVINGMNIST.IMG_SIZE
-    elif cfg.DATASET == "HKO":
-        IN_LEN = cfg.HKO.BENCHMARK.IN_LEN
-        OUT_LEN = cfg.HKO.BENCHMARK.OUT_LEN
-        IMG_SIZE = cfg.HKO.ITERATOR.WIDTH
+    elif cfg.DATASET == "SST":
+        IN_LEN = cfg.SST.BENCHMARK.IN_LEN
+        OUT_LEN = cfg.SST.BENCHMARK.OUT_LEN
+        IMG_SIZE = cfg.SST.ITERATOR.WIDTH
 
     data_shapes = {
         'context':
@@ -124,7 +124,7 @@ def construct_modules(args):
             layout="NCDHW")
     }
 
-    if cfg.DATASET == "HKO":
+    if cfg.DATASET == "SST":
         data_shapes["mask"] = mx.io.DataDesc(
             name='mask',
             shape=(cfg.MODEL.TRAIN.BATCH_SIZE, 1, OUT_LEN, IMG_SIZE, IMG_SIZE),

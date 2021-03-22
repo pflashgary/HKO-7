@@ -3,6 +3,7 @@ import zlib
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor, wait
 from nowcasting.config import cfg
+from netCDF4 import Dataset, num2date
 
 _executor_pool = ThreadPoolExecutor(max_workers=16)
 
@@ -19,12 +20,11 @@ def read_mask_file(filepath, out):
     -------
 
     """
-    f = open(filepath, "rb")
-    dat = zlib.decompress(f.read())
-    out[:] = np.frombuffer(dat, dtype=bool).reshape(
-        (cfg.SST.ITERATOR.HEIGHT, cfg.SST.ITERATOR.WIDTH)
-    )
-    f.close()
+    with Dataset(filepath) as cur_nc:
+        mask = cur_nc.variables["mask"][:]
+        mask = mask.reshape(mask.shape[-2], mask.shape[-1])
+    out[:] = mask[cfg.CROP.X1 : cfg.CROP.X2, cfg.CROP.Y1 : cfg.CROP.Y2]
+    return out
 
 
 def save_mask_file(npy_mask, filepath):
